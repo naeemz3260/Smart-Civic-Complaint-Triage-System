@@ -1,141 +1,211 @@
-import React, { useState } from 'react'
-import { trackByCode } from '../../api/complaints'
-import { Complaint } from '../../api/types'
-import { StatusPill } from '../../components/tickets/StatusPill'
-import { PriorityBars } from '../../components/tickets/PriorityBars'
-import { translate } from '../../i18n'
-import { useAppState } from '../../store/AppStateContext'
-import { Search, MapPin, Calendar, CheckCircle2, QrCode } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { PageContainer } from '@/components/common/PageContainer'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card'
+import { Input } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
+import { StatusBadge, PriorityBadge } from '@/components/ui/Badge'
+import { CivicImage } from '@/components/ui/CivicImage'
+import { EmptyState } from '@/components/common/EmptyState'
+import { Skeleton } from '@/components/ui/Skeleton'
+import { getTicketByTrackingCode } from '@/lib/api'
+import type { Ticket } from '@/types'
+import { formatDate } from '@/lib/utils'
+import { Search, MapPin, Calendar, Clock, CheckCircle2, User, Building2 } from 'lucide-react'
 
 export const TrackPage: React.FC = () => {
-  const { language } = useAppState()
-  const [code, setCode] = useState('')
-  const [ticket, setTicket] = useState<Complaint | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { trackingCode } = useParams<{ trackingCode?: string }>()
+  const navigate = useNavigate()
+  const { t, i18n } = useTranslation()
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!code) return
+  const [inputCode, setInputCode] = useState(trackingCode || '')
+  const [ticket, setTicket] = useState<Ticket | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [searched, setSearched] = useState(false)
+
+  const handleSearch = async (codeToSearch: string) => {
+    if (!codeToSearch.trim()) return
     setLoading(true)
-    setError(null)
+    setSearched(true)
     try {
-      const result = await trackByCode(code.trim().toUpperCase())
+      const result = await getTicketByTrackingCode(codeToSearch)
       setTicket(result)
-    } catch (err: any) {
-      setError('Ticket code not found. Please verify your tracking code.')
+      if (trackingCode !== codeToSearch) {
+        navigate(`/track/${codeToSearch}`, { replace: true })
+      }
+    } catch {
       setTicket(null)
     } finally {
       setLoading(false)
     }
   }
 
+  useEffect(() => {
+    if (trackingCode) {
+      setInputCode(trackingCode)
+      handleSearch(trackingCode)
+    }
+  }, [trackingCode])
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleSearch(inputCode)
+  }
+
   return (
-    <div className="max-w-3xl mx-auto py-10 px-4 space-y-8">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-extrabold text-white">
-          {translate('nav_track', language)}
-        </h1>
-        <p className="text-sm text-slate-400">
-          Enter your 8-character civic reference code to see live triage status and audit timeline.
+    <PageContainer size="narrow" className="py-8">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-text">Track Complaint</h1>
+        <p className="text-sm text-text-muted">
+          Look up the real-time status and audit timeline of any reported civic issue.
         </p>
       </div>
 
-      <form onSubmit={handleSearch} className="flex gap-2 max-w-md mx-auto">
-        <input
-          type="text"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="e.g. TRK-91823"
-          className="flex-1 uppercase font-mono bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+      {/* Lookup Bar */}
+      <form onSubmit={onSubmit} className="flex gap-2 mb-6">
+        <Input
+          value={inputCode}
+          onChange={(e) => setInputCode(e.target.value)}
+          placeholder="Enter tracking code (e.g. CC-2026-901230)"
+          className="font-mono uppercase"
         />
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex items-center gap-1.5 px-5 py-2.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-sm font-semibold transition-all shadow-md"
-        >
+        <Button type="submit" variant="primary" className="gap-2 shrink-0">
           <Search className="w-4 h-4" />
-          {loading ? 'Searching...' : 'Track'}
-        </button>
+          <span>Lookup</span>
+        </Button>
       </form>
 
-      {error && (
-        <div className="bg-rose-950/30 border border-rose-500/40 text-rose-300 text-xs p-3 rounded-xl text-center">
-          {error}
-        </div>
-      )}
+      {/* Quick Test Chips */}
+      <div className="flex items-center gap-2 mb-8 text-xs text-text-muted">
+        <span>Try sample codes:</span>
+        <button
+          type="button"
+          onClick={() => {
+            setInputCode('CC-2026-901230')
+            handleSearch('CC-2026-901230')
+          }}
+          className="font-mono text-primary hover:underline bg-primary-soft px-2 py-0.5 rounded"
+        >
+          CC-2026-901230
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setInputCode('CC-2026-901233')
+            handleSearch('CC-2026-901233')
+          }}
+          className="font-mono text-primary hover:underline bg-primary-soft px-2 py-0.5 rounded"
+        >
+          CC-2026-901233
+        </button>
+      </div>
 
-      {ticket && (
-        <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-base font-bold text-sky-400">
+      {/* Content */}
+      {loading ? (
+        <Card className="p-6 space-y-4">
+          <Skeleton className="h-6 w-1/3" />
+          <Skeleton className="h-4 w-2/3" />
+          <Skeleton className="h-32 w-full" />
+        </Card>
+      ) : ticket ? (
+        <div className="space-y-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <StatusBadge status={ticket.status} />
+                  <PriorityBadge level={ticket.priority_level} />
+                </div>
+                <span className="font-mono text-xs text-text-muted font-bold">
                   {ticket.tracking_code}
                 </span>
-                <StatusPill status={ticket.status} />
               </div>
-              <h2 className="text-lg font-bold text-white mt-1">{ticket.title}</h2>
-            </div>
-            <div className="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-700 text-xs text-slate-300">
-              <QrCode className="w-4 h-4 text-sky-400" />
-              <span>MCC Verified Token</span>
-            </div>
-          </div>
+              <CardTitle className="text-xl pt-2">{ticket.title}</CardTitle>
+              <CardDescription>{ticket.description}</CardDescription>
+            </CardHeader>
 
-          <p className="text-sm text-slate-300">{ticket.description}</p>
+            <CardContent className="space-y-4 pt-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 bg-background rounded-control border border-border text-xs">
+                <div>
+                  <span className="text-text-muted block">Department</span>
+                  <span className="font-medium text-text">{ticket.department}</span>
+                </div>
+                <div>
+                  <span className="text-text-muted block">Ward</span>
+                  <span className="font-medium text-text">{ticket.ward_id}</span>
+                </div>
+                <div>
+                  <span className="text-text-muted block">Reported</span>
+                  <span className="font-medium text-text">
+                    {formatDate(ticket.created_at, i18n.language)}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-text-muted block">SLA Target</span>
+                  <span className="font-medium text-text">
+                    {formatDate(ticket.sla_due_at, i18n.language)}
+                  </span>
+                </div>
+              </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
-            <div>
-              <span className="text-slate-500 block">Department</span>
-              <span className="font-semibold text-slate-200">{ticket.department}</span>
-            </div>
-            <div>
-              <span className="text-slate-500 block">Ward</span>
-              <span className="font-semibold text-slate-200">{ticket.ward_id}</span>
-            </div>
-            <div>
-              <span className="text-slate-500 block">Submitted</span>
-              <span className="font-semibold text-slate-200">
-                {new Date(ticket.created_at).toLocaleDateString()}
-              </span>
-            </div>
-          </div>
+              {ticket.photo_url && (
+                <div className="pt-2">
+                  <span className="text-xs font-semibold text-text block mb-2">Photo Evidence</span>
+                  <CivicImage
+                    src={ticket.photo_url}
+                    aspectRatio="16/9"
+                    className="max-h-64 object-cover"
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-          <PriorityBars
-            score={ticket.priority_score}
-            factors={{
-              severity: ticket.severity_factor,
-              impact: ticket.impact_factor,
-              urgency: ticket.urgency_factor,
-              vulnerability: ticket.vulnerability_factor,
-            }}
-          />
-
-          {/* Audit Timeline */}
-          {ticket.status_events && ticket.status_events.length > 0 && (
-            <div className="space-y-3 pt-4 border-t border-slate-800">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Verification & Audit History
-              </h4>
-              <div className="space-y-3">
-                {ticket.status_events.map((evt) => (
-                  <div key={evt.id} className="flex items-start gap-3 text-xs">
-                    <CheckCircle2 className="w-4 h-4 text-sky-400 mt-0.5 shrink-0" />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-slate-200">{evt.to_status}</span>
-                        <span className="text-slate-500">by {evt.actor_name || evt.actor_role}</span>
-                      </div>
-                      {evt.comment && <p className="text-slate-400 text-[11px]">{evt.comment}</p>}
+          {/* Timeline Audit Log */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Clock className="w-4 h-4 text-primary" />
+                <span>Status & Audit History</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative ps-6 border-s border-border space-y-6 my-2">
+                {(ticket.status_events || []).map((event) => (
+                  <div key={event.id} className="relative">
+                    <span className="absolute -start-[31px] top-1 w-3.5 h-3.5 rounded-full bg-primary border-2 border-card" />
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                      <span className="text-xs font-semibold text-text">
+                        Status: {event.to_status}
+                      </span>
+                      <span className="text-[11px] text-text-muted">
+                        {formatDate(event.timestamp, i18n.language)}
+                      </span>
                     </div>
+                    {event.comment && (
+                      <p className="text-xs text-text-muted mt-1">{event.comment}</p>
+                    )}
+                    <span className="text-[10px] text-text-muted/80 block mt-0.5">
+                      Actor: {event.actor_name || event.actor_role}
+                    </span>
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            </CardContent>
+          </Card>
         </div>
-      )}
-    </div>
+      ) : searched ? (
+        <EmptyState
+          title="No Complaint Found"
+          description={`We couldn't find a complaint matching tracking code "${inputCode}". Verify the code and try again.`}
+          actionLabel="Clear Search"
+          onAction={() => {
+            setInputCode('')
+            setSearched(false)
+          }}
+        />
+      ) : null}
+    </PageContainer>
   )
 }

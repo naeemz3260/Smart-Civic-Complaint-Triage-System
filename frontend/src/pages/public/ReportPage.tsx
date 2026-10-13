@@ -1,209 +1,183 @@
 import React, { useState } from 'react'
-import { MapView2D } from '../../components/maps/MapView2D'
-import { checkNearbyDuplicates, createComplaint } from '../../api/complaints'
-import { Complaint } from '../../api/types'
-import { translate } from '../../i18n'
-import { useAppState } from '../../store/AppStateContext'
-import { AlertCircle, Camera, CheckCircle2, Send, MapPin } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { PageContainer } from '@/components/common/PageContainer'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card'
+import { Input, Textarea } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
+import { createTicket } from '@/lib/api'
+import { MOCK_CATEGORIES } from '@/mock/mockData'
+import type { CategoryId } from '@/types'
+import { MapPin, Camera, AlertTriangle, ArrowRight } from 'lucide-react'
 
-interface ReportPageProps {
-  onSuccess: (complaint: Complaint) => void
-}
+export const ReportPage: React.FC = () => {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
 
-export const ReportPage: React.FC<ReportPageProps> = ({ onSuccess }) => {
-  const { language } = useAppState()
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [lat, setLat] = useState(24.8562)
-  const [lng, setLng] = useState(67.0261)
-  const [photoFilename, setPhotoFilename] = useState<string | null>(null)
-  const [nearbyDuplicates, setNearbyDuplicates] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [submittedTicket, setSubmittedTicket] = useState<Complaint | null>(null)
-
-  const handleLocationSelect = async (newLat: number, newLng: number) => {
-    setLat(newLat)
-    setLng(newLng)
-    try {
-      const dupes = await checkNearbyDuplicates(newLat, newLng)
-      setNearbyDuplicates(dupes)
-    } catch (e) {
-      console.error(e)
-    }
-  }
+  const [category, setCategory] = useState<CategoryId>('pothole')
+  const [latitude, setLatitude] = useState(24.8607)
+  const [longitude, setLongitude] = useState(67.0011)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title || !description) return
-    setLoading(true)
+    if (!title.trim() || !description.trim()) {
+      setError('Please provide both a title and description for the report.')
+      return
+    }
+
     try {
-      const result = await createComplaint({
+      setIsSubmitting(true)
+      setError(null)
+      const ticket = await createTicket({
         title,
         description,
-        latitude: lat,
-        longitude: lng,
-        photo_filename: photoFilename || undefined,
+        category,
+        latitude,
+        longitude,
+        photo_filename: 'pothole_before.jpg',
       })
-      setSubmittedTicket(result)
-      onSuccess(result)
-    } catch (err: any) {
-      alert(`Submission Error: ${err.message}`)
+      navigate(`/confirmation/${ticket.tracking_code}`)
+    } catch {
+      setError('Failed to submit report. Please try again.')
     } finally {
-      setLoading(false)
+      setIsSubmitting(false)
     }
   }
 
-  if (submittedTicket) {
-    return (
-      <div className="max-w-2xl mx-auto py-12 px-4 text-center space-y-6">
-        <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/40">
-          <CheckCircle2 className="w-10 h-10" />
-        </div>
-        <h2 className="text-2xl font-bold text-white">Complaint Submitted & Triaged!</h2>
-        <div className="glass-panel p-6 rounded-2xl border border-sky-500/30 text-left space-y-3">
-          <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-            <span className="text-xs text-slate-400">Tracking Code</span>
-            <span className="font-mono text-base font-bold text-sky-400">{submittedTicket.tracking_code}</span>
-          </div>
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-slate-400">Assigned Ward</span>
-            <span className="font-semibold text-slate-200">{submittedTicket.ward_id}</span>
-          </div>
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-slate-400">Department</span>
-            <span className="font-semibold text-slate-200">{submittedTicket.department}</span>
-          </div>
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-slate-400">Priority Score</span>
-            <span className="font-bold text-rose-400">{(submittedTicket.priority_score * 100).toFixed(0)}%</span>
-          </div>
-        </div>
-        <button
-          onClick={() => {
-            setSubmittedTicket(null)
-            setTitle('')
-            setDescription('')
-            setNearbyDuplicates([])
-          }}
-          className="px-6 py-2.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-sm font-semibold transition-all shadow-lg"
-        >
-          Submit Another Issue
-        </button>
-      </div>
-    )
-  }
-
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4 space-y-8">
-      <div>
-        <h1 className="text-2xl font-extrabold text-white">
-          {translate('nav_report', language)}
-        </h1>
-        <p className="text-sm text-slate-400 mt-1">
-          {translate('hero_subheading', language)}
+    <PageContainer size="narrow" className="py-8">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-text">Report a Civic Issue</h1>
+        <p className="text-sm text-text-muted">
+          Submit details and GPS location to trigger AI triage and municipal dispatch.
         </p>
       </div>
 
-      {/* Duplicate Alert Banner */}
-      {nearbyDuplicates.length > 0 && (
-        <div className="glass-panel border-amber-500/40 bg-amber-950/20 p-4 rounded-xl flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <h4 className="text-sm font-bold text-amber-300">
-              {translate('duplicate_alert_title', language)} ({nearbyDuplicates.length} found)
-            </h4>
-            <p className="text-xs text-slate-300">
-              {translate('duplicate_alert_desc', language)}
-            </p>
-            <div className="pt-2 flex flex-wrap gap-2">
-              {nearbyDuplicates.map((dup) => (
-                <span key={dup.id} className="text-[11px] bg-slate-900/80 px-2.5 py-1 rounded border border-slate-700 text-slate-300">
-                  {dup.title} ({dup.distance_meters}m away)
-                </span>
-              ))}
+      <form onSubmit={handleSubmit}>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Issue Information</CardTitle>
+            <CardDescription>
+              Select category and describe the observed hazard or problem.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-5">
+            {error && (
+              <div className="p-3 rounded-control bg-status-onhold-soft text-status-onhold text-xs flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-semibold text-text mb-1.5">
+                Issue Category
+              </label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value as CategoryId)}
+                className="w-full h-10 rounded-control border border-border bg-card px-3 text-sm text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                {MOCK_CATEGORIES.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name} — {c.department}
+                  </option>
+                ))}
+              </select>
             </div>
-          </div>
-        </div>
-      )}
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Left Column: Form Inputs */}
-        <div className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold uppercase text-slate-400 mb-1.5">
-              {translate('form_title', language)}
-            </label>
-            <input
-              type="text"
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder={translate('form_title_placeholder', language)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold uppercase text-slate-400 mb-1.5">
-              {translate('form_desc', language)}
-            </label>
-            <textarea
-              required
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder={translate('form_desc_placeholder', language)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
-            />
-          </div>
-
-          {/* Photo upload mock selector */}
-          <div>
-            <label className="block text-xs font-semibold uppercase text-slate-400 mb-1.5">
-              {translate('form_photo', language)}
-            </label>
-            <div className="flex gap-2">
-              {['pothole_before.jpg', 'sewage_before.jpg', 'live_wire.jpg'].map((photo) => (
-                <button
-                  type="button"
-                  key={photo}
-                  onClick={() => setPhotoFilename(photo)}
-                  className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-all ${
-                    photoFilename === photo
-                      ? 'bg-sky-500/20 text-sky-300 border-sky-500'
-                      : 'bg-slate-900 text-slate-400 border-slate-800'
-                  }`}
-                >
-                  <Camera className="w-3.5 h-3.5" />
-                  {photo.split('.')[0]}
-                </button>
-              ))}
+            <div>
+              <label className="block text-xs font-semibold text-text mb-1.5">
+                Short Summary / Title *
+              </label>
+              <Input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Deep pothole causing tire damage on Main Boulevard"
+                required
+              />
             </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full mt-4 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white rounded-xl font-bold text-sm shadow-xl transition-all disabled:opacity-50"
-          >
-            <Send className="w-4 h-4" />
-            {loading ? 'Processing Triage...' : translate('form_submit', language)}
-          </button>
-        </div>
+            <div>
+              <label className="block text-xs font-semibold text-text mb-1.5">
+                Detailed Description *
+              </label>
+              <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Provide landmarks, estimated dimensions, or safety hazards..."
+                rows={4}
+                required
+              />
+            </div>
 
-        {/* Right Column: Interactive Map Pinning */}
-        <div className="space-y-2">
-          <label className="block text-xs font-semibold uppercase text-slate-400">
-            {translate('form_location', language)}
-          </label>
-          <MapView2D
-            selectedLat={lat}
-            selectedLng={lng}
-            onSelectLocation={handleLocationSelect}
-            interactivePin={true}
-          />
-        </div>
+            {/* Location selector preview */}
+            <div className="pt-2 border-t border-border/60">
+              <label className="block text-xs font-semibold text-text mb-2 flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-primary" />
+                <span>Incident Coordinates</span>
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <span className="text-[11px] text-text-muted">Latitude</span>
+                  <Input
+                    type="number"
+                    step="0.0001"
+                    value={latitude}
+                    onChange={(e) => setLatitude(parseFloat(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <span className="text-[11px] text-text-muted">Longitude</span>
+                  <Input
+                    type="number"
+                    step="0.0001"
+                    value={longitude}
+                    onChange={(e) => setLongitude(parseFloat(e.target.value))}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Photo Attachment Placeholder */}
+            <div className="pt-2 border-t border-border/60">
+              <label className="block text-xs font-semibold text-text mb-2 flex items-center gap-1.5">
+                <Camera className="w-4 h-4 text-primary" />
+                <span>Issue Photo (Optional)</span>
+              </label>
+              <div className="border border-dashed border-border rounded-control p-6 text-center bg-background/50 hover:bg-background transition-colors cursor-pointer">
+                <Camera className="w-8 h-8 text-text-muted mx-auto mb-2 opacity-50" />
+                <p className="text-xs font-medium text-text">Click to upload photo or drag & drop</p>
+                <p className="text-[11px] text-text-muted mt-0.5">JPEG, PNG up to 10MB (EXIF privacy sanitized)</p>
+              </div>
+            </div>
+          </CardContent>
+
+          <CardFooter className="flex justify-between items-center">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(-1)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              isLoading={isSubmitting}
+              className="gap-2"
+            >
+              <span>Submit Issue</span>
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </CardFooter>
+        </Card>
       </form>
-    </div>
+    </PageContainer>
   )
 }
