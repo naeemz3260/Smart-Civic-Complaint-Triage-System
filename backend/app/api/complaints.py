@@ -50,12 +50,13 @@ def get_complaint(complaint_id: str, db: Session = Depends(get_db)):
 
 @router.post("/upload-photo")
 async def upload_photo(file: UploadFile = File(...)):
-    """Uploads photo and strips sensitive EXIF metadata."""
+    """Uploads photo, auto-extracts real GPS coordinates, and strips sensitive EXIF metadata."""
     content = await file.read()
     dest = os.path.join("uploads", file.filename)
-    saved_path, sha256 = MediaService.strip_exif_and_save(content, dest)
+    saved_path, sha256, gps_coords = MediaService.strip_exif_and_save(content, dest)
     return {
         "filename": file.filename,
         "saved_path": saved_path,
-        "sha256": sha256
+        "sha256": sha256,
+        "gps": gps_coords
     }
