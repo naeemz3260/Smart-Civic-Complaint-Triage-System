@@ -1,11 +1,44 @@
 :root {
-  --color-primary: #0284c7;
-  --color-secondary: #6366f1;
-  --color-accent: #38bdf8;
-  --color-critical: #ef4444;
-  --color-warning: #f59e0b;
-  --color-success: #10b981;
-  --radius-card: 1rem;
-  --radius-pill: 9999px;
-  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  /**
+   * [COMMENT 1: DESIGN SYSTEM TOKEN ARCHITECTURE]
+   * Centralized CSS variables implementing the CivicCare institutional design tokens.
+   * - Primary emerald (#1E8E6E) conveys municipal trust and responsiveness.
+   * - High-contrast text (#14231F) satisfies WCAG 2.1 AA accessibility ratios over #F5F8F7 canvas.
+   * - Priority and status tokens are paired with 15% opacity tint soft variants for badges and pills.
+   * - Geometry adheres to an integer 4px spacing base, 12px card corners, and 8px interactive controls.
+   */
+  /* Brand Primary */
+  --color-primary: #1E8E6E;
+  --color-primary-hover: #166F57;
+  --color-primary-soft: #E6F4EF;
+
+  /* Surfaces & Canvas */
+  --color-background: #F5F8F7;
+  --color-card: #FFFFFF;
+
+  /* Typography & Structure */
+  --color-text: #14231F;
+  --color-text-muted: #6B7C77;
+  --color-border: #E3EAE7;
+
+  /* Priority Tokens */
+  --color-priority-high: #E8731A;
+  --color-priority-high-soft: #FDEBD8;
+  --color-priority-medium: #B88A0B;
+  --color-priority-medium-soft: #FBF1D3;
+  --color-priority-low: #2E9E6B;
+  --color-priority-low-soft: #E3F5EC;
+
+  /* Status Tokens */
+  --color-status-inprogress: #2F7DD1;
+  --color-status-inprogress-soft: #E3EEFA;
+  --color-status-resolved: #2E9E6B;
+  --color-status-resolved-soft: #E3F5EC;
+  --color-status-onhold: #D64545;
+  --color-status-onhold-soft: #FBE6E6;
+
+  /* Dimensions & Grid (4px spacing base) */
+  --radius-card: 12px;
+  --radius-control: 8px;
+  --max-width-content: 1200px;
 }
