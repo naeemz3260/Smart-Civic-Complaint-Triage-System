@@ -1,0 +1,7 @@
+{
+  "plugins": [
+    ".agents/plugins/gsd/plugin.json",
+    ".agents/plugins/ralph_loop/plugin.json",
+    ".agents/plugins/ponytail/plugin.json"
+  ]
+}

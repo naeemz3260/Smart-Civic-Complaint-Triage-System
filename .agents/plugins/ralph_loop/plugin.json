@@ -1,0 +1,6 @@
+{
+  "name": "ralph_loop",
+  "version": "1.0.0",
+  "description": "Ralph Loop iterative self-critique and automated verification engine.",
+  "rules": ["../rules/ralph-loop.md"]
+}

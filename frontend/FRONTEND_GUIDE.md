@@ -1,151 +1,60 @@
-# Frontend Team Developer Onboarding & API Contract Guide
+# CivicCare - Frontend Architecture & Phase 1 Foundation Guide
 
-Welcome to the frontend development team for the **Smart Civic Complaint Triage System**! This document provides everything you need to build, iterate, and integrate the frontend without needing to touch the backend or ML internals.
+## 1. Overview
+CivicCare is a production-quality civic complaint triage frontend designed to match the 15-screen institutional municipal specification.
 
----
+## 2. Tech Stack
+- **Framework**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS, PostCSS, class-variance-authority, clsx, tailwind-merge
+- **Routing**: React Router v6
+- **Server State**: TanStack Query v5 (`@tanstack/react-query`)
+- **Localization**: react-i18next (English & Urdu RTL)
+- **Data & Visuals**: Leaflet / react-leaflet, Recharts, Lucide React, qrcode.react, Framer Motion
+- **Mock / API Layer**: Unified `src/lib/api.ts` switchable via `VITE_USE_MOCK` and `VITE_API_URL`
 
-## 🚀 Quick Setup for Frontend Developers
+## 3. Design System Tokens
+All design tokens are defined in [src/styles/tokens.css](file:///c:/Users/Ali%20Nawaz/Desktop/Smart-Civic-Complaint-Triage-System/frontend/src/styles/tokens.css) and exposed via [tailwind.config.ts](file:///c:/Users/Ali%20Nawaz/Desktop/Smart-Civic-Complaint-Triage-System/frontend/tailwind.config.ts):
+- **Brand Primary**: `#1E8E6E` (hover: `#166F57`, soft: `#E6F4EF`)
+- **Background**: `#F5F8F7`, **Card**: `#FFFFFF`
+- **Text**: `#14231F`, **Muted**: `#6B7C77`, **Border**: `#E3EAE7`
+- **High Priority**: `#E8731A` / `#FDEBD8`
+- **Medium Priority**: `#B88A0B` / `#FBF1D3`
+- **Low Priority**: `#2E9E6B` / `#E3F5EC`
+- **In Progress**: `#2F7DD1` / `#E3EEFA`
+- **Resolved**: `#2E9E6B` / `#E3F5EC`
+- **On Hold**: `#D64545` / `#FBE6E6`
+- **Grid & Sizing**: 4px grid, 12px card radius, 8px control radius, max content width 1200px.
+- **Typography**: Inter (English), Noto Nastaliq Urdu (headings & paragraphs in Urdu), Noto Naskh Arabic (Urdu controls).
 
-### 1. Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **npm**: v9.0.0 or higher
-- (Optional) Running backend API at `http://localhost:8000` (or use the mock fallback responses outlined below).
-
-### 2. Getting the Frontend Running
-```bash
-cd frontend
-npm install
-npm run dev
-```
-The Vite development server will start at `http://localhost:5173`.
-
-### 3. API Proxy Configuration
-Vite is already pre-configured in [vite.config.ts](file:///c:/Users/Ali%20Nawaz/Desktop/Smart-Civic-Complaint-Triage-System/frontend/vite.config.ts) to automatically proxy requests:
-- `/api/*` ➔ `http://127.0.0.1:8000/api/*`
-- `/uploads/*` ➔ `http://127.0.0.1:8000/uploads/*`
-
----
-
-## 📁 Frontend Directory Organization & Architecture
-
-The frontend directory is structured so multiple teammates can work independently on separate components, pages, or features:
-
+## 4. Folder Structure
 ```
 frontend/
-├── index.html                   # HTML entrypoint (Google Fonts & metadata configured)
-├── package.json                 # Dependencies (React 18, Tailwind, Lucide icons)
-├── vite.config.ts               # Vite bundler & reverse proxy
-├── tailwind.config.ts           # Civic color palette & dark-mode classes
-│
+├── public/
+│   └── civiccare_reference_screens.jpg  # Preserved 15-screen master reference
 ├── src/
-│   ├── main.tsx                 # React DOM mount point
-│   ├── App.tsx                  # Root app layout & view routing
-│   │
-│   ├── api/                     # ⚡ API Integration Layer (Fully Typed)
-│   │   ├── client.ts            # Base fetch wrapper with 'x-role' headers
-│   │   ├── types.ts             # TypeScript interfaces matching backend models
-│   │   ├── complaints.ts        # Submit, list, filter, search, & nearby duplicates
-│   │   ├── workflow.ts          # State transitions, closure verification, review queue
-│   │   └── stats.ts             # City KPIs, 3D hotspots, & What-If simulation
-│   │
-│   ├── store/
-│   │   └── AppStateContext.tsx   # Global Context: Role ('resident' | 'staff' | 'admin'),
-│   │                            # Language ('en' | 'ur' | 'roman-ur'), reduced motion
-│   │
-│   ├── i18n/                    # 🌐 Multilingual Dictionaries
-│   │   ├── en.json              # English labels & placeholders
-│   │   ├── ur.json              # Urdu (اردو) with RTL typography support
-│   │   ├── roman-ur.json        # Roman Urdu colloquial phrases
-│   │   └── index.ts             # translate(key, lang) helper function
-│   │
-│   ├── components/              # 🧩 Reusable UI Components
-│   │   ├── layout/              # TopBar, RoleSwitcher, LanguageSwitcher
-│   │   ├── tickets/             # TicketCard, PriorityBars, StatusPill, BeforeAfterSlider
-│   │   ├── maps/                # MapView2D (interactive canvas pin), HotspotScene3D (isometric 3D)
-│   │   └── common/              # Modals, loaders, and alerts
-│   │
-│   ├── pages/                   # 📱 Screen Views (Separated by User Role)
-│   │   ├── public/              # Resident Portal:
-│   │   │   ├── LandingPage.tsx       # Hero, service guide, live ticket feed
-│   │   │   ├── ReportPage.tsx        # Wizard with map pin, photo picker & duplicate warning
-│   │   │   ├── TrackPage.tsx         # Real-time tracking code lookup & audit timeline
-│   │   │   └── TransparencyPage.tsx  # SLA charts, ward distribution, & public KPIs
-│   │   │
-│   │   ├── staff/               # Field Operations:
-│   │   │   └── StaffTasksPage.tsx    # Work order queue & mandatory before/after photo closure
-│   │   │
-│   │   └── admin/               # Municipal HQ:
-│   │       └── DashboardPage.tsx     # Triage queue, low-confidence review, 3D hotspots & What-If sandbox
-│   │
-│   └── styles/
-│       ├── globals.css          # Glassmorphic CSS classes & scrollbars
-│       └── tokens.css           # CSS variables for themes & accents
+│   ├── components/
+│   │   ├── common/         # PageContainer, RoleGuard, EmptyState, ErrorState
+│   │   ├── navigation/     # TopBar, RoleSwitcher, LanguageSwitcher
+│   │   └── ui/             # Button, Input, Card, Badge, Skeleton, CivicImage
+│   ├── context/            # AppContext (role & language states)
+│   ├── i18n/               # i18next configuration, en.json, ur.json
+│   ├── layouts/            # RootLayout with header & footer
+│   ├── lib/                # api.ts (mock/backend switchable client), utils.ts
+│   ├── mock/               # High-fidelity mock tickets, stats, hotspots
+│   ├── pages/
+│   │   ├── admin/          # AdminDashboard, WhatIfSandbox, AdminAnalytics, AdminSettings
+│   │   ├── auth/           # LoginPage placeholder
+│   │   ├── not-found/      # NotFoundPage (404)
+│   │   ├── public/         # Landing, Report, Confirmation, Track, Transparency, ModelReport
+│   │   └── staff/          # StaffDashboard, StaffTicketDetail
+│   ├── routes/             # AppRoutes with role-guarded demo routes
+│   ├── styles/             # tokens.css, index.css
+│   └── types/              # Role, Status, CategoryId, Ticket, etc.
 ```
 
----
-
-## 🔌 API Endpoints & Contract Reference
-
-All endpoints return JSON and accept standard payloads. The full OpenAPI specification is also exported at [docs/openapi.json](file:///c:/Users/Ali%20Nawaz/Desktop/Smart-Civic-Complaint-Triage-System/docs/openapi.json).
-
-### 1. Citizen Endpoints
-| Action | Method | Path | Request Body / Query | Role Required |
-|---|---|---|---|---|
-| Submit Complaint | `POST` | `/api/complaints` | `{ title, description, latitude, longitude, photo_filename? }` | Resident |
-| List Complaints | `GET` | `/api/complaints` | `?category=&ward_id=&status=&min_priority=&limit=` | Any |
-| Check Duplicates | `POST` | `/api/nearby` | `{ latitude, longitude, radius_meters: 60 }` | Any |
-| Track by Token | `GET` | `/api/tracking/{code}` | None (`/api/tracking/TRK-91823`) | Any |
-
-### 2. Field Staff Endpoints
-| Action | Method | Path | Request Body / Query | Role Required |
-|---|---|---|---|---|
-| Verify Closure | `POST` | `/api/workflow/{id}/verify-closure` | `{ after_photo_filename, comment }` | Staff (`x-role: staff`) |
-| Change Status | `POST` | `/api/workflow/{id}/transition` | `{ to_status: "IN_PROGRESS", comment? }` | Staff (`x-role: staff`) |
-
-### 3. Municipal Admin Endpoints
-| Action | Method | Path | Request Body / Query | Role Required |
-|---|---|---|---|---|
-| Review Queue | `GET` | `/api/review/queue` | None | Admin (`x-role: admin`) |
-| Confirm Review | `POST` | `/api/review/decide` | `{ review_item_id, confirmed_category, comment? }` | Admin (`x-role: admin`) |
-| Merge Clusters | `POST` | `/api/clusters/merge` | `{ cluster_id, target_cluster_id }` | Admin (`x-role: admin`) |
-| Run "What-If" | `POST` | `/api/whatif` | `{ severity_weight, impact_weight, urgency_weight, vulnerability_weight }` | Admin |
-| 3D Hotspots | `GET` | `/api/hotspots` | None | Any |
-| Civic Stats | `GET` | `/api/stats` | None | Any |
-
----
-
-## 🎨 Theme & Styling Utilities
-
-The frontend uses Tailwind CSS with customized civic design tokens:
-
-### Custom Tailwind Classes
-- **Glassmorphic Cards**: `glass-panel` (subtle blur background) and `glass-panel-elevated` (hover highlight).
-- **Glow Accents**: `glow-sky` (active highlights), `glow-red` (critical hazard warnings).
-- **Colors**:
-  - `bg-civic-500` through `bg-civic-900` for municipal blues.
-  - `text-hazard-critical` (`#ef4444`) for high-priority / safety alerts.
-  - `text-hazard-warning` (`#f59e0b`) for SLA warnings.
-  - `text-hazard-safe` (`#10b981`) for resolved & verified tickets.
-
-### Language & RTL Typography
-When the language is switched to Urdu (`ur`), the layout dynamically applies:
-```css
-.urdu-font {
-  font-family: 'Noto Nastaliq Urdu', 'Plus Jakarta Sans', sans-serif;
-  direction: rtl;
-}
+## 5. Development Commands
+```bash
+npm install
+npm run dev     # Starts Vite dev server at http://localhost:5173
+npm run build   # Typechecks and creates production bundle
 ```
-
----
-
-## 👥 How Your Teammate Can Work on This
-
-1. **Working on UI/UX Only**:
-   - Edit files inside `frontend/src/pages/` and `frontend/src/components/`.
-   - All styling can be tweaked in Tailwind or `src/styles/globals.css`.
-2. **Adding New Pages or Views**:
-   - Add the new view inside `frontend/src/pages/`.
-   - Register the view in [frontend/src/App.tsx](file:///c:/Users/Ali%20Nawaz/Desktop/Smart-Civic-Complaint-Triage-System/frontend/src/App.tsx) and navigation bar in [frontend/src/components/layout/TopBar.tsx](file:///c:/Users/Ali%20Nawaz/Desktop/Smart-Civic-Complaint-Triage-System/frontend/src/components/layout/TopBar.tsx).
-3. **Running the Full Stack**:
-   - Teammate can run `npm run dev` in `frontend/`.
-   - In another terminal, run `uvicorn backend.app.main:app --reload --port 8000` to have real backend responses.

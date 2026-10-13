@@ -1,0 +1,6 @@
+{
+  "name": "gsd",
+  "version": "1.0.0",
+  "description": "Get Shit Done (GSD) plugin: enforces zero-slop, zero-placeholders, complete execution.",
+  "rules": ["../rules/gsd-zero-slop.md"]
+}
