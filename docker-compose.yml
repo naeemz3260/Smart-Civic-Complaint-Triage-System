@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  backend-lite:
+    profiles: ["lite"]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: civic_backend_lite
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV_MODE=lite
+      - SQLITE_DB_PATH=/app/data/civic_complaints.db
+      - CITY_CONFIG_PATH=/app/config/city.yaml
+      - ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+    volumes:
+      - ./config:/app/config:ro
+      - ./data:/app/data
+      - backend_uploads:/app/uploads
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+  frontend-lite:
+    profiles: ["lite"]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: civic_frontend_lite
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend-lite
+
+  backend-full:
+    profiles: ["full"]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: civic_backend_full
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV_MODE=full
+      - SQLITE_DB_PATH=/app/data/civic_complaints.db
+      - CITY_CONFIG_PATH=/app/config/city.yaml
+      - ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+    volumes:
+      - ./config:/app/config:ro
+      - ./data:/app/data
+      - ./ml/models:/app/ml/models
+      - backend_uploads:/app/uploads
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+  frontend-full:
+    profiles: ["full"]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: civic_frontend_full
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend-full
+
+volumes:
+  backend_uploads:

@@ -1,0 +1,28 @@
+name: Bug Report
+description: Create a report to help us improve the system
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting an issue with the Civic Triage platform!
+  - type: input
+    id: component
+    attributes:
+      label: Affected Component
+      description: e.g., Backend API, Priority Engine, Vision Pipeline, Frontend Portal
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the issue.
+    validations:
+      required: true

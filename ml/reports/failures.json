@@ -1,0 +1,23 @@
+[
+  {
+    "id": "103",
+    "text": "Kachra jalaya ja raha hai dhuwan bohot hai saans lena mushkil",
+    "true_category": "garbage",
+    "predicted_category": "sewage",
+    "confidence": 0.19298477944258466
+  },
+  {
+    "id": "107",
+    "text": "Main chowk light broken causing dangerous blind turn at night",
+    "true_category": "streetlight",
+    "predicted_category": "sewage",
+    "confidence": 0.1892072834221923
+  },
+  {
+    "id": "108",
+    "text": "\u0628\u062c\u0644\u06cc \u06a9\u06cc \u0646\u0646\u06af\u06cc \u062a\u0627\u0631\u06cc\u06ba \u062f\u0631\u062e\u062a \u067e\u0631 \u06af\u0631\u06cc \u06c1\u0648\u0626\u06cc \u06c1\u06cc\u06ba \u0641\u0648\u0631\u06cc \u062a\u0648\u062c\u06c1 \u062f\u06cc\u06ba",
+    "true_category": "electricity",
+    "predicted_category": "pothole",
+    "confidence": 0.184576735689708
+  }
+]

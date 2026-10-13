@@ -1,0 +1,93 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "ward_id": "WARD-01",
+        "name": "Clifton & Coastal Zone",
+        "population_density": 0.85,
+        "lead_officer": "Engr. Tariq Aziz",
+        "phone": "+92-300-1110001"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [67.0100, 24.8100],
+            [67.0500, 24.8100],
+            [67.0500, 24.8400],
+            [67.0100, 24.8400],
+            [67.0100, 24.8100]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ward_id": "WARD-02",
+        "name": "Saddar Commercial Central",
+        "population_density": 0.95,
+        "lead_officer": "Dir. Imran Haider",
+        "phone": "+92-300-1110002"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [66.9900, 24.8450],
+            [67.0350, 24.8450],
+            [67.0350, 24.8750],
+            [66.9900, 24.8750],
+            [66.9900, 24.8450]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ward_id": "WARD-03",
+        "name": "Gulshan Educational District",
+        "population_density": 0.78,
+        "lead_officer": "Ms. Farzana Rauf",
+        "phone": "+92-300-1110003"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [67.0400, 24.8800],
+            [67.1100, 24.8800],
+            [67.1100, 24.9300],
+            [67.0400, 24.9300],
+            [67.0400, 24.8800]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ward_id": "WARD-04",
+        "name": "North Industrial Corridor",
+        "population_density": 0.65,
+        "lead_officer": "Engr. Bilal Qureshi",
+        "phone": "+92-300-1110004"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [67.0100, 24.9350],
+            [67.0800, 24.9350],
+            [67.0800, 24.9850],
+            [67.0100, 24.9850],
+            [67.0100, 24.9350]
+          ]
+        ]
+      }
+    }
+  ]
+}

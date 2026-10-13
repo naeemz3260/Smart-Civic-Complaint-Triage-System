@@ -1,0 +1,11 @@
+:root {
+  --color-primary: #0284c7;
+  --color-secondary: #6366f1;
+  --color-accent: #38bdf8;
+  --color-critical: #ef4444;
+  --color-warning: #f59e0b;
+  --color-success: #10b981;
+  --radius-card: 1rem;
+  --radius-pill: 9999px;
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -1,0 +1,37 @@
+id,text,language,category,severity
+1,"Massive deep pothole on main road causing serious traffic jams and motorcycle slips",en,pothole,0.75
+2,"سڑک پر بہت بڑا گڑھا بن گیا ہے، گاڑیوں کو شدید نقصان پہنچ رہا ہے",ur,pothole,0.80
+3,"Sadak pe bara khadda hai, bike walay gir rahay hain barish ki wajah se",roman_ur,pothole,0.85
+4,"Road surface eroded with multiple potholes near market junction",en,pothole,0.60
+5,"گلی کی سڑک ٹوٹی ہوئی ہے اور پختہ نہیں ہے",ur,pothole,0.55
+6,"Road toot gayi hai, car chalana mushkil ho gaya hai",roman_ur,pothole,0.65
+7,"Sewage water overflowing into residential streets and creating foul stench",en,sewage,0.85
+8,"سیوریج کا گندا پانی گلی میں ابل رہا ہے اور بدبو پھیل گئی ہے",ur,sewage,0.90
+9,"Gutter ubal raha hai aur sara ganda pani gharon ke bahar jama hai",roman_ur,sewage,0.90
+10,"Open manhole lid missing posing lethal risk for children at night",en,sewage,0.95
+11,"گٹر کا ڈھکن غائب ہے خدارا حادثے سے پہلے لگائیں",ur,sewage,0.95
+12,"Manhole ka cover gayab hai koi bacha gir sakta hai bohot khatarnak",roman_ur,sewage,0.98
+13,"Transformer caught fire and sparked continuously leaving block without electricity",en,electricity,0.95
+14,"بجلی کا ٹرانسفارمر جل گیا ہے اور پورا محلہ اندھیرے میں ہے",ur,electricity,0.90
+15,"Bijli ka taar toot kar zameen pe gir gaya hai current lagne ka khatra",roman_ur,electricity,1.00
+16,"Live wire hanging loose near bus stop urgent help needed",en,electricity,1.00
+17,"ہائی وولٹیج تار لٹک رہی ہے کسی وقت بھی حادثہ ہو سکتا ہے",ur,electricity,1.00
+18,"Power outage for 18 hours straight, severe voltage fluctuation",en,electricity,0.70
+19,"Drinking water pipeline burst causing clean water wastage and street flooding",en,water,0.75
+20,"پینے کے صاف پانی کی مین لائن پھٹ گئی ہے اور پانی ضائع ہو رہا ہے",ur,water,0.80
+21,"Pani ka pipeline leak kar raha hai pani ki supply band hai",roman_ur,water,0.75
+22,"No municipal water supply in our sector for the past four days",en,water,0.65
+23,"ہمارے علاقے میں چار دن سے پانی نہیں آ رہا عوام پریشان ہے",ur,water,0.70
+24,"Pani nahi araha subah se line bilkul dry hai",roman_ur,water,0.65
+25,"Huge pile of rotting garbage dumped beside community park attracting stray dogs",en,garbage,0.60
+26,"پارک کے کونے پر کوڑے کا بڑا ڈھیر لگ چکا ہے اور کتے جمع ہیں",ur,garbage,0.65
+27,"Kachra kundi over flow kar rahi hai koi uthanay nahi aya",roman_ur,garbage,0.65
+28,"Solid waste dumped outside government school gate, unbearable stench",en,garbage,0.75
+29,"اسکول کے باہر کچرے کے ڈھیر سے بچوں کا گزرنا محال ہے",ur,garbage,0.80
+30,"Hospital ke bahar medical waste kachra phainka hua hai jaldi safai karain",roman_ur,garbage,0.85
+31,"All streetlights non functional on residential lane leading to darkness and thefts",en,streetlight,0.50
+32,"گلی کی تمام اسٹریٹ لائٹس خراب ہیں اور اندھیرا رہتا ہے",ur,streetlight,0.55
+33,"Streetlight kafi din se band pari hai raat ko andhera hota hai",roman_ur,streetlight,0.50
+34,"Lamp post light bulb flickers and turns off repeatedly",en,streetlight,0.40
+35,"کھمبے کی لائٹ ٹوٹ چکی ہے نیا بلب درکار ہے",ur,streetlight,0.45
+36,"Pole light kharab hai rasta dikhayi nahi deta",roman_ur,streetlight,0.45

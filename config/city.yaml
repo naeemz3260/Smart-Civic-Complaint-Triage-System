@@ -1,0 +1,105 @@
+# Municipal Configuration & Triage Rules
+city_name: "Metropolis Civic Corporation"
+city_code: "MCC"
+default_coordinates:
+  lat: 24.8607
+  lng: 67.0011
+
+# Priority Factor Weights (Must sum to 1.0)
+priority_weights:
+  severity: 0.35
+  impact: 0.25
+  urgency: 0.25
+  vulnerability: 0.15
+
+# Confidence Thresholds
+confidence_thresholds:
+  auto_triage_minimum: 0.75      # Above this confidence, auto-assign without review queue
+  human_review_required: 0.50    # Between 0.50 and 0.75, goes to Low-Confidence Review Queue
+  reject_below: 0.25             # Below 0.25, flag as ambiguous or garbage text
+
+# Geospatial Clustering Parameters
+clustering:
+  duplicate_radius_meters: 60     # Within 60 meters, flag as probable duplicate to citizen
+  cluster_grouping_radius_m: 120  # Group into single municipal work order within 120m
+  temporal_window_hours: 72       # Merge complaints within 72 hours window
+
+# Supported Urban Complaint Categories
+categories:
+  - id: "pothole"
+    name: "Pothole & Road Damage"
+    department: "Road Maintenance Dept"
+    default_sla_hours: 48
+    base_severity: 0.65
+    safety_override_keywords: ["deep ditch", "sinkhole", "gadda", "accident prone"]
+    keywords:
+      en: ["pothole", "broken road", "crater", "asphalt", "bump", "street hole"]
+      ur: ["کھڈا", "ٹوٹی سڑک", "روڈ خراب", "گڑھا"]
+      roman_ur: ["gadda", "khadda", "sarak kharab", "sarak toot gayi", "tooti road"]
+
+  - id: "sewage"
+    name: "Sewage & Drainage Overflow"
+    department: "Water & Sanitation Authority"
+    default_sla_hours: 24
+    base_severity: 0.85
+    safety_override_keywords: ["gutters open", "overflowing feces", "sewage in houses"]
+    keywords:
+      en: ["sewage", "drainage", "gutter", "overflow", "stagnant water", "manhole"]
+      ur: ["سیوریج", "گٹر", "نالہ", "گندا پانی", "سیوریج ابل رہا"]
+      roman_ur: ["gutter", "sewerage", "ganda pani", "gutter ubal raha hai", "badbu"]
+
+  - id: "electricity"
+    name: "Electricity & Power Outage"
+    department: "Power Distribution Corp"
+    default_sla_hours: 12
+    base_severity: 0.90
+    safety_override_keywords: ["live wire", "sparking", "current", "electric shock", "bijli ka taar"]
+    keywords:
+      en: ["power cut", "transformer", "sparking", "blackout", "live wire", "electric pole"]
+      ur: ["بجلی بند", "تار ٹوٹ گیا", "ٹرانسفارمر", "کرنٹ", "سپارک"]
+      roman_ur: ["bijli band", "current", "taar toot gaya", "sparking", "transformer jal gaya"]
+
+  - id: "water"
+    name: "Water Leakage & Supply"
+    department: "Water & Sanitation Authority"
+    default_sla_hours: 36
+    base_severity: 0.70
+    safety_override_keywords: ["burst main line", "drinking water contamination"]
+    keywords:
+      en: ["water supply", "pipeline leak", "no water", "burst pipe", "low pressure"]
+      ur: ["پانی کی سپلائی", "پائپ لیک", "پانی بند", "پینے کا پانی"]
+      roman_ur: ["pani nahi araha", "pipeline phat gaya", "leakage", "pani ka pipe"]
+
+  - id: "garbage"
+    name: "Garbage & Solid Waste"
+    department: "Solid Waste Management"
+    default_sla_hours: 48
+    base_severity: 0.55
+    safety_override_keywords: ["burning trash", "hospital medical waste dumped"]
+    keywords:
+      en: ["garbage", "trash", "waste", "dumpster", "litter", "rubbish", "filth"]
+      ur: ["کچرا", "کوڑا کرکٹ", "گندگی", "ڈھیر"]
+      roman_ur: ["kachra", "koora", "gandagi", "kooda karkat", "safai nahi hui"]
+
+  - id: "streetlight"
+    name: "Streetlight Failure"
+    department: "Municipal Electrical Services"
+    default_sla_hours: 72
+    base_severity: 0.45
+    safety_override_keywords: ["pitch dark junction", "crime hazard"]
+    keywords:
+      en: ["streetlight", "lamp post", "dark street", "light bulb", "pole light off"]
+      ur: ["اسٹریٹ لائٹ بند", "اندھیرا", "لائٹ خراب"]
+      roman_ur: ["streetlight band", "light kharab", "andhera hai", "pole light"]
+
+# Vulnerability Proximity Multipliers
+vulnerability_zones:
+  hospital:
+    proximity_meters: 250
+    score_boost: 0.30
+  school:
+    proximity_meters: 200
+    score_boost: 0.25
+  main_road:
+    proximity_meters: 100
+    score_boost: 0.20

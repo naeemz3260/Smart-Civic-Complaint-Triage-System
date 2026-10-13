@@ -1,0 +1,9 @@
+id,text,language,category,severity
+101,"Deep trench left uncovered after pipeline digging on highway",en,pothole,0.80
+102,"روڈ کے درمیان گڑھا رات کو نظر نہیں آتا اور حادثات ہو رہے ہیں",ur,pothole,0.85
+103,"Kachra jalaya ja raha hai dhuwan bohot hai saans lena mushkil",roman_ur,garbage,0.75
+104,"Transformer blast caused loud sound and total power cutoff",en,electricity,0.90
+105,"گٹر کا پانی مسجد کے دروازے تک پہنچ گیا ہے",ur,sewage,0.92
+106,"Main line phat gayi aur gali me saaf pani ka talab ban gaya",roman_ur,water,0.78
+107,"Main chowk light broken causing dangerous blind turn at night",en,streetlight,0.55
+108,"بجلی کی ننگی تاریں درخت پر گری ہوئی ہیں فوری توجہ دیں",ur,electricity,1.00

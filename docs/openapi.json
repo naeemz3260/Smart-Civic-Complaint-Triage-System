@@ -1,0 +1,1569 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Smart Civic Complaint Triage System API",
+    "description": "Multilingual civic triage, explainable scoring, spatio-temporal clustering & verified dispatch workflows.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Check",
+        "operationId": "health_check_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/complaints": {
+      "post": {
+        "tags": [
+          "Complaints"
+        ],
+        "summary": "Submit Complaint",
+        "description": "Submit a civic complaint with auto-triage and scoring.",
+        "operationId": "submit_complaint_api_complaints_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComplaintCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplaintRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Complaints"
+        ],
+        "summary": "List Complaints",
+        "description": "Lists complaints with optional filtering by ward, category, status, or priority.",
+        "operationId": "list_complaints_api_complaints_get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "ward_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ward Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "min_priority",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Min Priority"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ComplaintRead"
+                  },
+                  "title": "Response List Complaints Api Complaints Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/complaints/{complaint_id}": {
+      "get": {
+        "tags": [
+          "Complaints"
+        ],
+        "summary": "Get Complaint",
+        "description": "Fetches full details and audit timeline for a specific complaint.",
+        "operationId": "get_complaint_api_complaints__complaint_id__get",
+        "parameters": [
+          {
+            "name": "complaint_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Complaint Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplaintRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/complaints/upload-photo": {
+      "post": {
+        "tags": [
+          "Complaints"
+        ],
+        "summary": "Upload Photo",
+        "description": "Uploads photo and strips sensitive EXIF metadata.",
+        "operationId": "upload_photo_api_complaints_upload_photo_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_photo_api_complaints_upload_photo_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/nearby": {
+      "post": {
+        "tags": [
+          "Nearby / Duplicate Check"
+        ],
+        "summary": "Check Nearby Complaints",
+        "description": "Finds active complaints within a given radius (default 60m)\nto alert residents before submitting duplicates.",
+        "operationId": "check_nearby_complaints_api_nearby_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NearbyCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/NearbyComplaintItem"
+                  },
+                  "type": "array",
+                  "title": "Response Check Nearby Complaints Api Nearby Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workflow/{complaint_id}/transition": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "summary": "Transition Complaint Status",
+        "description": "Executes validated status machine transition according to caller role.",
+        "operationId": "transition_complaint_status_api_workflow__complaint_id__transition_post",
+        "parameters": [
+          {
+            "name": "complaint_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Complaint Id"
+            }
+          },
+          {
+            "name": "x-role",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "admin",
+              "title": "X-Role"
+            }
+          },
+          {
+            "name": "x-actor-name",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "Municipal User",
+              "title": "X-Actor-Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplaintRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workflow/{complaint_id}/verify-closure": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "summary": "Submit And Verify Closure",
+        "description": "Field staff submits after-photo for automated comparison and ticket resolution.",
+        "operationId": "submit_and_verify_closure_api_workflow__complaint_id__verify_closure_post",
+        "parameters": [
+          {
+            "name": "complaint_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Complaint Id"
+            }
+          },
+          {
+            "name": "x-role",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "staff",
+              "title": "X-Role"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClosureVerificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/review/queue": {
+      "get": {
+        "tags": [
+          "Review Queue"
+        ],
+        "summary": "Get Review Queue",
+        "description": "Retrieves unreviewed low-confidence tickets for admin human triage.",
+        "operationId": "get_review_queue_api_review_queue_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/review/decide": {
+      "post": {
+        "tags": [
+          "Review Queue"
+        ],
+        "summary": "Submit Review Decision",
+        "description": "Admin confirms or reassigns complaint category from review queue.",
+        "operationId": "submit_review_decision_api_review_decide_post",
+        "parameters": [
+          {
+            "name": "x-role",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "admin",
+              "title": "X-Role"
+            }
+          },
+          {
+            "name": "x-actor-name",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "Admin Reviewer",
+              "title": "X-Actor-Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HumanReviewDecision"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clusters": {
+      "get": {
+        "tags": [
+          "Clusters"
+        ],
+        "summary": "List Clusters",
+        "description": "Lists active complaint clusters for spatial management.",
+        "operationId": "list_clusters_api_clusters_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ClusterRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Clusters Api Clusters Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clusters/merge": {
+      "post": {
+        "tags": [
+          "Clusters"
+        ],
+        "summary": "Merge Clusters Endpoint",
+        "description": "Merges two complaint clusters into a single work order.",
+        "operationId": "merge_clusters_endpoint_api_clusters_merge_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClusterMergeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClusterRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tracking/{tracking_code}": {
+      "get": {
+        "tags": [
+          "Public Tracking"
+        ],
+        "summary": "Track Complaint",
+        "description": "Public lookup by 8-character citizen tracking token.\nProvides complete progress and audit timeline without login.",
+        "operationId": "track_complaint_api_tracking__tracking_code__get",
+        "parameters": [
+          {
+            "name": "tracking_code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tracking Code"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplaintRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stats": {
+      "get": {
+        "tags": [
+          "Stats & Transparency"
+        ],
+        "summary": "Get City Statistics",
+        "description": "Computes municipal aggregate analytics and SLA metrics.",
+        "operationId": "get_city_statistics_api_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/hotspots": {
+      "get": {
+        "tags": [
+          "Hotspots"
+        ],
+        "summary": "Get Hotspots Data",
+        "description": "Returns coordinate points with intensity and density values\nfor rendering on 2D maps and 3D Three.js volumetric columns.",
+        "operationId": "get_hotspots_data_api_hotspots_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HotspotPoint"
+                  },
+                  "type": "array",
+                  "title": "Response Get Hotspots Data Api Hotspots Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/model-report": {
+      "get": {
+        "tags": [
+          "Model Evaluation Report"
+        ],
+        "summary": "Get Model Report",
+        "description": "Returns classification accuracy, per-class F1 metrics, and failure logs.",
+        "operationId": "get_model_report_api_model_report_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/whatif": {
+      "post": {
+        "tags": [
+          "What-If Simulator"
+        ],
+        "summary": "Simulate Policy Weights",
+        "description": "Recalculates complaint priority ranking under hypothetical policy weights.\nProvides instant rank delta analysis for municipal decision makers.",
+        "operationId": "simulate_policy_weights_api_whatif_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhatIfRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/WhatIfItem"
+                  },
+                  "type": "array",
+                  "title": "Response Simulate Policy Weights Api Whatif Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_upload_photo_api_complaints_upload_photo_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_photo_api_complaints_upload_photo_post"
+      },
+      "CityStatsResponse": {
+        "properties": {
+          "total_complaints": {
+            "type": "integer",
+            "title": "Total Complaints"
+          },
+          "resolved_count": {
+            "type": "integer",
+            "title": "Resolved Count"
+          },
+          "pending_count": {
+            "type": "integer",
+            "title": "Pending Count"
+          },
+          "breached_count": {
+            "type": "integer",
+            "title": "Breached Count"
+          },
+          "sla_compliance_rate": {
+            "type": "number",
+            "title": "Sla Compliance Rate"
+          },
+          "auto_triage_rate": {
+            "type": "number",
+            "title": "Auto Triage Rate"
+          },
+          "category_distribution": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Category Distribution"
+          },
+          "ward_distribution": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Ward Distribution"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_complaints",
+          "resolved_count",
+          "pending_count",
+          "breached_count",
+          "sla_compliance_rate",
+          "auto_triage_rate",
+          "category_distribution",
+          "ward_distribution"
+        ],
+        "title": "CityStatsResponse"
+      },
+      "ClosureVerificationRequest": {
+        "properties": {
+          "after_photo_filename": {
+            "type": "string",
+            "title": "After Photo Filename"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          }
+        },
+        "type": "object",
+        "required": [
+          "after_photo_filename"
+        ],
+        "title": "ClosureVerificationRequest"
+      },
+      "ClusterMergeRequest": {
+        "properties": {
+          "cluster_id": {
+            "type": "string",
+            "title": "Cluster Id"
+          },
+          "target_cluster_id": {
+            "type": "string",
+            "title": "Target Cluster Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cluster_id",
+          "target_cluster_id"
+        ],
+        "title": "ClusterMergeRequest"
+      },
+      "ClusterRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "ward_id": {
+            "type": "string",
+            "title": "Ward Id"
+          },
+          "center_lat": {
+            "type": "number",
+            "title": "Center Lat"
+          },
+          "center_lng": {
+            "type": "number",
+            "title": "Center Lng"
+          },
+          "ticket_count": {
+            "type": "integer",
+            "title": "Ticket Count"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "ward_id",
+          "center_lat",
+          "center_lng",
+          "ticket_count",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ClusterRead"
+      },
+      "ComplaintCreate": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 5,
+            "title": "Description"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "photo_filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Filename"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "description",
+          "latitude",
+          "longitude"
+        ],
+        "title": "ComplaintCreate"
+      },
+      "ComplaintRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "tracking_code": {
+            "type": "string",
+            "title": "Tracking Code"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "department": {
+            "type": "string",
+            "title": "Department"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "ward_id": {
+            "type": "string",
+            "title": "Ward Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "priority_score": {
+            "type": "number",
+            "title": "Priority Score"
+          },
+          "severity_factor": {
+            "type": "number",
+            "title": "Severity Factor"
+          },
+          "impact_factor": {
+            "type": "number",
+            "title": "Impact Factor"
+          },
+          "urgency_factor": {
+            "type": "number",
+            "title": "Urgency Factor"
+          },
+          "vulnerability_factor": {
+            "type": "number",
+            "title": "Vulnerability Factor"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "is_critical_override": {
+            "type": "boolean",
+            "title": "Is Critical Override"
+          },
+          "photo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Url"
+          },
+          "after_photo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After Photo Url"
+          },
+          "cluster_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cluster Id"
+          },
+          "assigned_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned To"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "sla_due_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Sla Due At"
+          },
+          "resolved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved At"
+          },
+          "closed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "status_events": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/StatusEventRead"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Events",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "tracking_code",
+          "title",
+          "description",
+          "language",
+          "category",
+          "department",
+          "latitude",
+          "longitude",
+          "ward_id",
+          "status",
+          "priority_score",
+          "severity_factor",
+          "impact_factor",
+          "urgency_factor",
+          "vulnerability_factor",
+          "confidence",
+          "is_critical_override",
+          "created_at",
+          "sla_due_at"
+        ],
+        "title": "ComplaintRead"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HotspotPoint": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "intensity": {
+            "type": "number",
+            "title": "Intensity"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "ward_id": {
+            "type": "string",
+            "title": "Ward Id"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "latitude",
+          "longitude",
+          "intensity",
+          "category",
+          "ward_id",
+          "count"
+        ],
+        "title": "HotspotPoint"
+      },
+      "HumanReviewDecision": {
+        "properties": {
+          "review_item_id": {
+            "type": "integer",
+            "title": "Review Item Id"
+          },
+          "confirmed_category": {
+            "type": "string",
+            "title": "Confirmed Category"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          }
+        },
+        "type": "object",
+        "required": [
+          "review_item_id",
+          "confirmed_category"
+        ],
+        "title": "HumanReviewDecision"
+      },
+      "NearbyCheckRequest": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "radius_meters": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Radius Meters",
+            "default": 60.0
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          }
+        },
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "title": "NearbyCheckRequest"
+      },
+      "NearbyComplaintItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "distance_meters": {
+            "type": "number",
+            "title": "Distance Meters"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "category",
+          "status",
+          "distance_meters",
+          "created_at"
+        ],
+        "title": "NearbyComplaintItem"
+      },
+      "StatusEventRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "from_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Status"
+          },
+          "to_status": {
+            "type": "string",
+            "title": "To Status"
+          },
+          "actor_role": {
+            "type": "string",
+            "title": "Actor Role"
+          },
+          "actor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Name"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "from_status",
+          "to_status",
+          "actor_role",
+          "actor_name",
+          "comment",
+          "timestamp"
+        ],
+        "title": "StatusEventRead"
+      },
+      "StatusTransitionRequest": {
+        "properties": {
+          "to_status": {
+            "type": "string",
+            "title": "To Status"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "assigned_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned To"
+          }
+        },
+        "type": "object",
+        "required": [
+          "to_status"
+        ],
+        "title": "StatusTransitionRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WhatIfItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "original_score": {
+            "type": "number",
+            "title": "Original Score"
+          },
+          "simulated_score": {
+            "type": "number",
+            "title": "Simulated Score"
+          },
+          "original_rank": {
+            "type": "integer",
+            "title": "Original Rank"
+          },
+          "simulated_rank": {
+            "type": "integer",
+            "title": "Simulated Rank"
+          },
+          "rank_delta": {
+            "type": "integer",
+            "title": "Rank Delta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "original_score",
+          "simulated_score",
+          "original_rank",
+          "simulated_rank",
+          "rank_delta"
+        ],
+        "title": "WhatIfItem"
+      },
+      "WhatIfRequest": {
+        "properties": {
+          "severity_weight": {
+            "type": "number",
+            "title": "Severity Weight"
+          },
+          "impact_weight": {
+            "type": "number",
+            "title": "Impact Weight"
+          },
+          "urgency_weight": {
+            "type": "number",
+            "title": "Urgency Weight"
+          },
+          "vulnerability_weight": {
+            "type": "number",
+            "title": "Vulnerability Weight"
+          }
+        },
+        "type": "object",
+        "required": [
+          "severity_weight",
+          "impact_weight",
+          "urgency_weight",
+          "vulnerability_weight"
+        ],
+        "title": "WhatIfRequest"
+      }
+    }
+  }
+}

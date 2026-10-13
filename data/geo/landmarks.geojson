@@ -1,0 +1,70 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LND-001",
+        "name": "City General Teaching Hospital",
+        "type": "hospital",
+        "capacity_beds": 650
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [67.0250, 24.8550]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LND-002",
+        "name": "St. Mary Model Higher Secondary School",
+        "type": "school",
+        "students": 1200
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [67.0320, 24.8280]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LND-003",
+        "name": "National Children's Trauma Hospital",
+        "type": "hospital",
+        "capacity_beds": 350
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [67.0720, 24.9120]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LND-004",
+        "name": "Quaid Public Primary Academy",
+        "type": "school",
+        "students": 850
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [67.0510, 24.9520]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "LND-005",
+        "name": "Shahrah-e-Faisal Main Transit Corridor",
+        "type": "main_road",
+        "daily_vehicles": 120000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [67.0450, 24.8680]
+      }
+    }
+  ]
+}
