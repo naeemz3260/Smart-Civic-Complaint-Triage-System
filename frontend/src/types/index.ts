@@ -1,26 +1,60 @@
+export type Role = 'resident' | 'staff' | 'admin'
+
+export type Status =
+  | 'SUBMITTED'
+  | 'NEEDS_REVIEW'
+  | 'TRIAGED'
+  | 'ASSIGNED'
+  | 'IN_PROGRESS'
+  | 'RESOLVED'
+  | 'CLOSED'
+  | 'REOPENED'
+  | 'REJECTED'
+  | 'ON_HOLD'
+
+export type PriorityLevel = 'high' | 'medium' | 'low'
+
+export type CategoryId =
+  | 'pothole'
+  | 'sewage'
+  | 'electricity'
+  | 'water'
+  | 'garbage'
+  | 'streetlight'
+
+export interface CategoryMeta {
+  id: CategoryId
+  name: string
+  department: string
+  default_sla_hours: number
+  base_severity: number
+  iconName: string
+}
+
 export interface StatusEvent {
   id: number
-  from_status: string | null
-  to_status: string
+  from_status: Status | string | null
+  to_status: Status | string
   actor_role: string
   actor_name: string | null
   comment: string | null
   timestamp: string
 }
 
-export interface Complaint {
+export interface Ticket {
   id: string
   tracking_code: string
   title: string
   description: string
   language: string
-  category: string
+  category: CategoryId
   department: string
   latitude: number
   longitude: number
   ward_id: string
-  status: string
+  status: Status
   priority_score: number
+  priority_level: PriorityLevel
   severity_factor: number
   impact_factor: number
   urgency_factor: number
@@ -38,6 +72,9 @@ export interface Complaint {
   status_events?: StatusEvent[]
 }
 
+// Backward-compatible alias
+export type Complaint = Ticket
+
 export interface CityStats {
   total_complaints: number
   resolved_count: number
@@ -54,7 +91,7 @@ export interface HotspotPoint {
   latitude: number
   longitude: number
   intensity: number
-  category: string
+  category: CategoryId | string
   ward_id: string
   count: number
 }
@@ -64,7 +101,7 @@ export interface ReviewItem {
   complaint_id: string
   title: string
   description: string
-  predicted_category: string
+  predicted_category: CategoryId | string
   confidence: number
   reason: string
   ward_id: string
@@ -73,10 +110,38 @@ export interface ReviewItem {
 
 export interface WhatIfItem {
   id: string
-  category: string
+  category: CategoryId | string
   original_score: number
   simulated_score: number
   original_rank: number
   simulated_rank: number
   rank_delta: number
+}
+
+export interface NearbyDuplicate {
+  id: string
+  title: string
+  category: CategoryId | string
+  status: Status | string
+  distance_meters: number
+  created_at: string
+}
+
+export interface CreateTicketPayload {
+  title: string
+  description: string
+  latitude: number
+  longitude: number
+  photo_filename?: string
+  category?: CategoryId
+}
+
+export interface FilterParams {
+  category?: CategoryId | string
+  ward_id?: string
+  status?: Status | string
+  min_priority?: number
+  search?: string
+  limit?: number
+  offset?: number
 }
