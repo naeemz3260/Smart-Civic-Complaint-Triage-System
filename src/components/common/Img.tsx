@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
 import { ImageOff, Loader2 } from 'lucide-react';
 
-// Real high-resolution Pakistani municipal infrastructure photographs
+// Map requested paths cleanly to valid public static assets
 export const DEFAULT_PHOTO_MAP: Record<string, string> = {
   // Hero & Backgrounds
-  '/images/hero-street.jpg': '/src/assets/images/pakistan_karachi_hero_1791924661309.jpg',
-  '/images/pakistan-hero.jpg': '/src/assets/images/pakistan_karachi_hero_1791924661309.jpg',
-  '/images/pakistan-boulevard.jpg': '/src/assets/images/pakistan_modern_civic_1791925228760.jpg',
-  '/images/pakistan-sanitation.jpg': '/src/assets/images/pakistan_sanitation_1791925193832.jpg',
-  '/images/pakistan-repair.jpg': '/src/assets/images/pakistan_street_repair_1791924661627.jpg',
-  '/images/pakistan-water.jpg': '/src/assets/images/pakistan_water_repair_1791925210862.jpg',
-  '/images/pakistan-night.jpg': '/src/assets/images/pakistan_civic_night_1791924661846.jpg',
+  '/images/hero-street.jpg': '/images/hero-street.jpg',
+  '/images/pakistan-hero.jpg': '/images/pakistan-hero.jpg',
+  '/images/pakistan-boulevard.jpg': '/images/pakistan-boulevard.jpg',
+  '/images/pakistan-sanitation.jpg': '/images/pakistan-sanitation.jpg',
+  '/images/pakistan-repair.jpg': '/images/pakistan-repair.jpg',
+  '/images/pakistan-water.jpg': '/images/pakistan-water.jpg',
+  '/images/pakistan-night.jpg': '/images/pakistan-night.jpg',
 
   // Category before / after issues
-  '/images/issue-streetlight-night.jpg': '/src/assets/images/issue_streetlight_1791922481760.jpg',
-  '/images/after-streetlight-fixed.jpg': '/src/assets/images/pakistan_civic_night_1791924661846.jpg',
-  '/images/issue-pothole.jpg': '/src/assets/images/issue_pothole_1791922480102.jpg',
-  '/images/after-pothole-fixed.jpg': '/src/assets/images/pakistan_street_repair_1791924661627.jpg',
-  '/images/issue-garbage.jpg': '/src/assets/images/issue_garbage_1791922524874.jpg',
-  '/images/after-garbage-cleared.jpg': '/src/assets/images/pakistan_sanitation_1791925193832.jpg',
-  '/images/issue-drain-blocked.jpg': '/src/assets/images/issue_drain_1791922525374.jpg',
-  '/images/after-drain-cleared.jpg': '/src/assets/images/pakistan_water_repair_1791925210862.jpg',
-  '/images/issue-water-leak.jpg': '/src/assets/images/issue_water_leak_1791922527511.jpg',
-  '/images/after-leak-fixed.jpg': '/src/assets/images/pakistan_water_repair_1791925210862.jpg'
+  '/images/issue-streetlight-night.jpg': '/images/issue-streetlight-night.jpg',
+  '/images/after-streetlight-fixed.jpg': '/images/after-streetlight-fixed.jpg',
+  '/images/issue-pothole.jpg': '/images/issue-pothole.jpg',
+  '/images/after-pothole-fixed.jpg': '/images/after-pothole-fixed.jpg',
+  '/images/issue-garbage.jpg': '/images/issue-garbage.jpg',
+  '/images/after-garbage-cleared.jpg': '/images/after-garbage-cleared.jpg',
+  '/images/issue-drain-blocked.jpg': '/images/issue-drain-blocked.jpg',
+  '/images/after-drain-cleared.jpg': '/images/after-drain-cleared.jpg',
+  '/images/issue-water-leak.jpg': '/images/issue-water-leak.jpg',
+  '/images/after-leak-fixed.jpg': '/images/after-leak-fixed.jpg'
 };
 
 interface ImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {

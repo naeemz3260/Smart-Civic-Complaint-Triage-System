@@ -71,6 +71,12 @@ if frontend_dist:
     if os.path.exists(assets_dir):
         app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
+    images_dir = os.path.join(frontend_dist, "images")
+    if not os.path.exists(images_dir):
+        images_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "public", "images"))
+    if os.path.exists(images_dir):
+        app.mount("/images", StaticFiles(directory=images_dir), name="images")
+
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
         # Don't intercept API routes or documentation
