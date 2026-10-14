@@ -1,8 +1,10 @@
 import { Ticket, CreateComplaintInput, Status, CategoryId, ScoreWeights } from '../types';
 import { INITIAL_TICKETS } from '../mocks/tickets';
 
-const USE_MOCK = import.meta.env.VITE_USE_MOCK !== 'false';
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+// Safe env resolution across Vite frontend and Node.js server
+const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : (typeof process !== 'undefined' ? process.env : {});
+const USE_MOCK = env.VITE_USE_MOCK !== 'false';
+const API_URL = env.VITE_API_URL || '/api';
 
 // In-memory / sessionStorage store for interactive mutations during session
 const STORAGE_KEY = 'civiccare_tickets_store_v1';
