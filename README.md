@@ -15,7 +15,7 @@
 [![React 19 & Vite](https://img.shields.io/badge/React%2019-Vite%208-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![SQLite / WebAssembly](https://img.shields.io/badge/Database-SQLite%20(Zero--Config)-003B57?logo=sqlite&logoColor=white)](https://sqlite.org)
 
-**Live Deployment:** [Civic Care Portal (Railway)](https://railway.app) · **Demo Video:** [Watch on YouTube](https://youtube.com) · **Presentation Pitch:** [Slide Deck](https://slides.com)
+
 
 ---
 
